@@ -94,6 +94,8 @@ def Main():
 # Import new submissions
 def ingestNew(r, settings):
 
+    log('Scanning new for /r/{0}'.format(settings[0]))
+
     try:
 
         for submission in r.subreddit(settings[0]).new():
@@ -318,7 +320,7 @@ def enforceSubmission(r, submission, settings, mediaData):
             # Find matches
             for mediaHash in mediaHashes:
 
-                mediaSimilarity = int(((64 - bin(imgHash ^ int(mediaHash[0])).count('1'))*100.0)/64.0)
+                mediaSimilarity = int(((64 - bin(mediaData[0] ^ int(mediaHash[0])).count('1'))*100.0)/64.0)
 
                 parentBlacklist = False
 
@@ -334,7 +336,7 @@ def enforceSubmission(r, submission, settings, mediaData):
                     currentScore = int(originalSubmission.score)
                     currentComments = int(originalSubmission.num_comments)
                     currentStatus = 'Active'
-                    if originalsubmission.removed:
+                    if originalSubmission.removed:
                         currentStatus = 'Removed'
                     elif originalSubmission.author == '[deleted]':
                         currentStatus = 'Deleted'
@@ -366,7 +368,7 @@ def enforceSubmission(r, submission, settings, mediaData):
 
                 submission.report('Possible repost: {0} similar - {1} active'.format(matchCount, matchCountActive))
                 replyInfo = submission.reply(matchInfoTemplate.format(submission.author, mediaData[5], mediaData[6], mediaData[7], mediaData[8], matchRows))
-                replyInfo.remove(spam=False)
+                praw.models.reddit.comment.CommentModeration(replyInfo).remove(spam=False)
 
             if blacklisted:
 
