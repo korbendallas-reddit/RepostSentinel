@@ -305,7 +305,7 @@ def enforceSubmission(r, submission, settings, mediaData):
         # Handle single images
         if mediaData[4] == 1:
             
-            cur.execute('SELECT * FROM Media WHERE frame_count=1')
+            cur.execute('SELECT * FROM Media WHERE frame_count=1 AND subreddit=\'{0}\''.format(settings[0]))
             mediaHashes = cur.fetchall()
 
             matchInfoTemplate = '**OP:** {0}\n\n**Image Stats:**\n\n* Width: {1}\n\n* Height: {2}\n\n* Pixels: {3}\n\n* Size: {4}\n\n**History:**\n\nUser | Date | Match % | Image | Title | Karma | Comments | Status\n:---|:---|:---|:---|:---|:---|:---|:---\n{5}'
